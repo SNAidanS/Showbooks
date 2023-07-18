@@ -305,20 +305,20 @@ printShowbook <- function(CatalogName, FacilityID) {
   t %>% gtsave("title.pdf")
   
   n <- nrow(show)
-  j <- 19
+  j <- 17
   loops <- ceiling(n / j) - 1
-  i <- 19
+  i <- 17
   
   if (nrow(show[1:j, ] %>% select("Brand") %>% distinct()) > 2) {
-    j <- 19
+    j <- 17
     
     i <- j
   } else if (nrow(show[(i + 1):(i + j), ] %>% select("Brand") %>% distinct()) == 1) {
-    j <- 19
+    j <- 17
     
     i <- j
   } else {
-    j <- 19
+    j <- 17
     
     i <- j
     
@@ -394,7 +394,7 @@ printShowbook <- function(CatalogName, FacilityID) {
     for (n in 1:loops)
     {
       if (nrow(show[(i + 1):(i + j), ] %>% select("Brand") %>% distinct()) > 2) {
-        j <- 19
+        j <- 17
         t <-
           show[(i + 1):(i + j),] %>% na.omit() %>% arrange(Brand, Code, `Deal Start`) %>% 
           gt(groupname_col = "Brand") %>%
@@ -420,7 +420,7 @@ printShowbook <- function(CatalogName, FacilityID) {
         
         i <- i + j
       } else if (nrow(show[(i + 1):(i + j), ] %>% select("Brand") %>% distinct()) == 1) {
-        j <- 19
+        j <- 17
         t <-
           show[(i + 1):(i + j),] %>% na.omit() %>% arrange(Brand, Code, `Deal Start`) %>% 
           gt(groupname_col = "Brand") %>%
@@ -445,7 +445,7 @@ printShowbook <- function(CatalogName, FacilityID) {
           )
         i <- i + j
       } else  {
-        j <- 19
+        j <- 17
         t <-
           show[(i + 1):(i + j),] %>% na.omit() %>% arrange(Brand, Code, `Deal Start`) %>% 
           gt(groupname_col = "Brand") %>%
@@ -575,6 +575,11 @@ FacID = c(3, 40, 58, 8, 15, 1)
 
 #second function for adding in notes for GFD food shows
 
+
+
+
+
+
 printShowbookNotes <- function(CatalogName, FacilityID) {
   if (FacilityID == 1) {
     components <-
@@ -606,7 +611,7 @@ printShowbookNotes <- function(CatalogName, FacilityID) {
       `Delivery Group`,
       EVENT_START_DATE,
       EVENT_END_DATE,
-      CatName, ITEM_NBR2
+      CatName, ITEM_NBR2, Notes
     )
   
   
@@ -754,20 +759,20 @@ printShowbookNotes <- function(CatalogName, FacilityID) {
     t %>% gtsave("title.pdf")
     
     n <- nrow(show)
-    j <- 19
+    j <- 17
     loops <- ceiling(n / j) - 1
-    i <- 19
+    i <- 17
     
     if (nrow(show[1:j, ] %>% select("Brand") %>% distinct()) > 2) {
-      j <- 19
+      j <- 17
       
       i <- j
     } else if (nrow(show[(i + 1):(i + j), ] %>% select("Brand") %>% distinct()) == 1) {
-      j <- 19
+      j <- 17
       
       i <- j
     } else {
-      j <- 19
+      j <- 17
       
       i <- j
       
@@ -807,7 +812,14 @@ printShowbookNotes <- function(CatalogName, FacilityID) {
     
     
     show <- show %>% select(-`Row ID`)
+  
     
+    S <- show %>% filter(grepl('\\*', Code))
+    
+    
+  
+    if(nrow(S) >0){
+
     t <-
       show[1:i,] %>% na.omit() %>%  arrange(Brand, Code, `Deal Start`) %>% 
       gt(groupname_col = "Brand") %>%
@@ -823,6 +835,7 @@ printShowbookNotes <- function(CatalogName, FacilityID) {
         ),
         currency = "USD"
       ) %>%
+      tab_footnote(footnote = "* Allowance may overlap with additional offer, please see Perenso Order Portal for more details.") %>%
       gt_theme_aidan() %>% tab_options(
         data_row.padding = px(4),
         table.width = '100%',
@@ -833,17 +846,48 @@ printShowbookNotes <- function(CatalogName, FacilityID) {
         table.font.size = 9,
         row_group.font.size = 10
       )
+    
+    }else {
+      t <-
+        show[1:i,] %>% na.omit() %>%  arrange(Brand, Code, `Deal Start`) %>% 
+        gt(groupname_col = "Brand") %>%
+        tab_header(title = "SpartanNash Food Solutions Expo 2023",
+                   subtitle = paste0(CatalogName, '-', CatName)) %>%
+        fmt_currency(
+          columns = c(
+            "Show Price",
+            "Unit Cost",
+            "Allow",
+            "Deal Unit Cost",
+            'List Price'
+          ),
+          currency = "USD"
+        ) %>%
+        gt_theme_aidan() %>% tab_options(
+          data_row.padding = px(4),
+          table.width = '100%',
+          heading.align = 'center',
+          heading.subtitle.font.size = 10,
+          heading.title.font.size = 14,
+          column_labels.font.size =  10,
+          table.font.size = 9,
+          row_group.font.size = 10
+        ) 
+      
+    }
     t %>% gtsave("showbook.pdf")
     fileinputs <- "showbook.pdf"
     
-    
+
     
     
     if (loops != 0) {
       for (n in 1:loops)
       {
         if (nrow(show[(i + 1):(i + j), ] %>% select("Brand") %>% distinct()) > 2) {
-          j <- 19
+          j <- 17
+          S <- show %>% filter(grepl('\\*', Code))
+          if(nrow(S) >0){
           t <-
             show[(i + 1):(i + j),] %>% na.omit() %>% arrange(Brand, Code, `Deal Start`) %>% 
             gt(groupname_col = "Brand") %>%
@@ -857,6 +901,7 @@ printShowbookNotes <- function(CatalogName, FacilityID) {
               ),
               currency = "USD"
             ) %>%
+            tab_footnote(footnote = "* Allowance may overlap with additional offer, please see Perenso Order Portal for more details.") %>% 
             gt_theme_aidan() %>% tab_options(
               data_row.padding = px(4),
               table.width = '100%',
@@ -866,35 +911,35 @@ printShowbookNotes <- function(CatalogName, FacilityID) {
               table.font.size = 9,
               row_group.font.size = 10
             )
+          } else{
+            t <-
+              show[(i + 1):(i + j),] %>% na.omit() %>% arrange(Brand, Code, `Deal Start`) %>% 
+              gt(groupname_col = "Brand") %>%
+              fmt_currency(
+                columns = c(
+                  "Show Price",
+                  "Unit Cost",
+                  "Allow",
+                  "Deal Unit Cost",
+                  'List Price'
+                ),
+                currency = "USD"
+              ) %>%               gt_theme_aidan() %>% tab_options(
+                data_row.padding = px(4),
+                table.width = '100%',
+                heading.align = 'center',
+                heading.title.font.size = 14,
+                column_labels.font.size =  10,
+                table.font.size = 9,
+                row_group.font.size = 10
+              )
+          }
           
           i <- i + j
-        } else if (nrow(show[(i + 1):(i + j), ] %>% select("Brand") %>% distinct()) == 1) {
-          j <- 19
-          t <-
-            show[(i + 1):(i + j),] %>% na.omit() %>% arrange(Brand, Code, `Deal Start`) %>% 
-            gt(groupname_col = "Brand") %>%
-            fmt_currency(
-              columns = c(
-                "Show Price",
-                "Unit Cost",
-                "Allow",
-                "Deal Unit Cost",
-                'List Price'
-              ),
-              currency = "USD"
-            ) %>%
-            gt_theme_aidan() %>% tab_options(
-              data_row.padding = px(4),
-              table.width = '100%',
-              heading.align = 'center',
-              heading.title.font.size = 14,
-              column_labels.font.size =  10,
-              table.font.size = 9,
-              row_group.font.size = 10
-            )
-          i <- i + j
         } else  {
-          j <- 19
+          j <- 17
+          S <- show %>% filter(grepl('\\*', Code))
+          if(nrow(S) >0){
           t <-
             show[(i + 1):(i + j),] %>% na.omit() %>% arrange(Brand, Code, `Deal Start`) %>% 
             gt(groupname_col = "Brand") %>%
@@ -908,6 +953,7 @@ printShowbookNotes <- function(CatalogName, FacilityID) {
               ),
               currency = "USD"
             ) %>%
+            tab_footnote(footnote = "* Allowance may overlap with additional offer, please see Perenso Order Portal for more details.") %>% 
             gt_theme_aidan() %>% tab_options(
               data_row.padding = px(4),
               table.width = '100%',
@@ -917,6 +963,31 @@ printShowbookNotes <- function(CatalogName, FacilityID) {
               table.font.size = 9,
               row_group.font.size = 10
             )
+          }
+          else{
+            t <-
+              show[(i + 1):(i + j),] %>% na.omit() %>% arrange(Brand, Code, `Deal Start`) %>% 
+              gt(groupname_col = "Brand") %>%
+              fmt_currency(
+                columns = c(
+                  "Show Price",
+                  "Unit Cost",
+                  "Allow",
+                  "Deal Unit Cost",
+                  'List Price'
+                ),
+                currency = "USD"
+              ) %>%
+              gt_theme_aidan() %>% tab_options(
+                data_row.padding = px(4),
+                table.width = '100%',
+                heading.align = 'center',
+                heading.title.font.size = 14,
+                column_labels.font.size =  10,
+                table.font.size = 9,
+                row_group.font.size = 10
+              )
+          }
           i <- i + j
         }
         
@@ -962,6 +1033,7 @@ printShowbookNotes <- function(CatalogName, FacilityID) {
     if (nrow(comps) != 0) {
       qpdf::pdf_combine(
         input = c("title.pdf", "output.pdf", "components.pdf"),
+        #input = c("title.pdf", "output.pdf"),
         output = paste0(CatalogName, '-', FacilityID, ".pdf")
       )
       
@@ -996,6 +1068,15 @@ printShowbookNotes <- function(CatalogName, FacilityID) {
 
 
 
+
+#2023 Food Show/Expo-Dairy- Fall/Holiday
+
+
+FacID = c(3, 40, 58, 8, 15, 1)
+
+# Uncomment and Run this
+
+  printShowbookNotes("2023 Food Show/Expo-Dairy- Fall/Holiday", 3)
 
 
 
